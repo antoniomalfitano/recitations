@@ -1,0 +1,25 @@
+scalar opzione=1
+
+if opzione==1 {
+	global work="C:\Users\Antonio Malfitano\Desktop\RECI-Archive"
+}
+
+clear all
+set more off
+
+qui cd "$work"
+u rfam16
+merge 1:1 nquest using ricfam16, gen(_merge1)
+merge 1:1 nquest using risfam16, gen(_merge2)
+merge 1:m nquest using carcom16, gen(_merge3)
+drop _m*
+
+//we use W- Net Wealth- as a measure of tot. net worth
+
+drop if cfred==0 //we only keep head household
+
+preserve
+collapse (mean) w, by(eta)
+tw line w eta, sort title("Net Worth by Age")
+graph export agewealth_profile.pdf, replace
+restore
